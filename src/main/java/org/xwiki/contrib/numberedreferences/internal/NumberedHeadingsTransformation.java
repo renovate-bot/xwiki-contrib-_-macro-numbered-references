@@ -113,7 +113,7 @@ public class NumberedHeadingsTransformation extends AbstractTransformation
 
             // Step 1: Find number in previous Header blocks and increase by 1
             List<Integer> number =
-                extractNumberFromPreviousBlocks(headerBlock.getSection(), Block.Axes.PRECEDING_SIBLING);
+                extractNumberFromPreviousBlocks(headerBlock.getSection(), Block.Axes.PRECEDING);
             if (number.isEmpty()) {
                 // Find ancestor Header blocks
                 number =  extractNumberFromPreviousBlocks(headerBlock.getSection(), Block.Axes.ANCESTOR);
