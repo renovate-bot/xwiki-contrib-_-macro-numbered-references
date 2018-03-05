@@ -66,6 +66,14 @@ public class NumberedHeadingsTransformation extends AbstractTransformation
     private static final SpecialSymbolBlock DOT_BLOCK = new SpecialSymbolBlock('.');
 
     @Override
+    public int getPriority()
+    {
+        // Use a high value so that it's executed last so that if there are transformations creating header blocks
+        // they'll get numbered too.
+        return 2000;
+    }
+
+    @Override
     public void transform(Block block, TransformationContext context) throws TransformationException
     {
         // Algorithm:
