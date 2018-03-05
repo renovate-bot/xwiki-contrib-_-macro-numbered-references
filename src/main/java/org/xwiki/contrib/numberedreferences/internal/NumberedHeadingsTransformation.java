@@ -38,7 +38,6 @@ import org.xwiki.rendering.block.SpecialSymbolBlock;
 import org.xwiki.rendering.block.WordBlock;
 import org.xwiki.rendering.block.match.BlockMatcher;
 import org.xwiki.rendering.block.match.ClassBlockMatcher;
-import org.xwiki.rendering.internal.block.ProtectedBlockFilter;
 import org.xwiki.rendering.listener.Format;
 import org.xwiki.rendering.transformation.AbstractTransformation;
 import org.xwiki.rendering.transformation.TransformationContext;
@@ -65,11 +64,6 @@ public class NumberedHeadingsTransformation extends AbstractTransformation
     private static final BlockMatcher SECTIONBLOCK_MATCHER = new ClassBlockMatcher(SectionBlock.class);
 
     private static final SpecialSymbolBlock DOT_BLOCK = new SpecialSymbolBlock('.');
-
-    /**
-     * Used to filter protected blocks (code macro marker block, etc).
-     */
-    private ProtectedBlockFilter filter = new ProtectedBlockFilter();
 
     @Override
     public void transform(Block block, TransformationContext context) throws TransformationException
