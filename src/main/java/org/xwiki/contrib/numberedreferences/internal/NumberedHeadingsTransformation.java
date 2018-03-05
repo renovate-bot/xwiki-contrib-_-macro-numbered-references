@@ -24,6 +24,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.xwiki.component.annotation.Component;
 import org.xwiki.rendering.block.Block;
 import org.xwiki.rendering.block.FormatBlock;
 import org.xwiki.rendering.block.HeaderBlock;
@@ -47,6 +51,9 @@ import org.xwiki.rendering.transformation.TransformationException;
  * @version $Id$
  * @since 1.0
  */
+@Component
+@Named("numberedheadings")
+@Singleton
 public class NumberedHeadingsTransformation extends AbstractTransformation
 {
     private static final String CLASS = "class";
