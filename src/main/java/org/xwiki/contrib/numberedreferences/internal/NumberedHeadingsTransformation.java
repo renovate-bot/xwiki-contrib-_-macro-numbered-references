@@ -161,7 +161,7 @@ public class NumberedHeadingsTransformation extends AbstractTransformation
         return new FormatBlock(valueBlocks, Format.NONE, Collections.singletonMap(CLASS, CLASS_VALUE));
     }
 
-    // TODO: Remove this when http://jira.xwiki/org/XXXX is implemented
+    // TODO: Remove this when https://jira.xwiki.org/browse/XWIKI-15093 is implemented
     private boolean isInsProtectedBlock(Block block)
     {
         Block currentBlock = block;
