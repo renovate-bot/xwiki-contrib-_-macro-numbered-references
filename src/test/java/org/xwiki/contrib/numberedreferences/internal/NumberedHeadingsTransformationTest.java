@@ -66,7 +66,8 @@ public class NumberedHeadingsTransformationTest
             + "= heading A =\n"
             + "== heading B ==\n"
             + "== {{id name='C'/}}heading C ==\n"
-            + "=== heading D ===\n";
+            + "=== heading D ===\n"
+            + "= heading E =\n";
 
         Parser parser = this.mocker.getInstance(Parser.class, "xwiki/2.1");
         XDOM xdom = parser.parse(new StringReader(content));
@@ -79,13 +80,14 @@ public class NumberedHeadingsTransformationTest
         BlockRenderer renderer = this.mocker.getInstance(BlockRenderer.class, Syntax.XWIKI_2_1.toIdString());
         renderer.render(xdom, printer);
 
-        String expectedContent = "See section [[1.2.1>>doc:||anchor=\"C\"]]. "
+        String expectedContent = "See section [[1.2>>doc:||anchor=\"C\"]]. "
                 + "Invalid (% class=\"xwikirenderingerror\" %)No section id named [invalid] was found"
                     + "(% class=\"xwikirenderingerrordescription hidden\" %){{{Verify the section id used.}}}(%%).\n\n"
             + "= (% class=\"numbered-reference\" %)1(%%) heading A =\n\n"
             + "== (% class=\"numbered-reference\" %)1.1(%%) heading B ==\n\n"
             + "== (% class=\"numbered-reference\" %)1.2(%%) {{id name=\"C\"/}}heading C ==\n\n"
-            + "=== (% class=\"numbered-reference\" %)1.2.1(%%) heading D ===";
+            + "=== (% class=\"numbered-reference\" %)1.2.1(%%) heading D ===\n\n"
+            + "= (% class=\"numbered-reference\" %)2(%%) heading E =";
 
         assertEquals(expectedContent, printer.toString());
     }

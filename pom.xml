@@ -32,7 +32,7 @@
   <name>Numbered Reference Macro</name>
   <description>Provides numbered headings and more generally allow to number anything</description>
   <properties>
-    <xwiki.jacoco.instructionRatio>0.89</xwiki.jacoco.instructionRatio>
+    <xwiki.jacoco.instructionRatio>0.82</xwiki.jacoco.instructionRatio>
     <!-- Extension Manager category -->
     <xwiki.extension.category>macro</xwiki.extension.category>
     <xwiki.issueManagement.system>jira</xwiki.issueManagement.system>
