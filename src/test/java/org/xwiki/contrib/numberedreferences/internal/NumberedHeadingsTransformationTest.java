@@ -32,6 +32,7 @@ import org.xwiki.rendering.block.MacroMarkerBlock;
 import org.xwiki.rendering.block.SectionBlock;
 import org.xwiki.rendering.block.WordBlock;
 import org.xwiki.rendering.block.XDOM;
+import org.xwiki.rendering.internal.transformation.macro.MacroTransformation;
 import org.xwiki.rendering.listener.HeaderLevel;
 import org.xwiki.rendering.parser.Parser;
 import org.xwiki.rendering.renderer.BlockRenderer;
@@ -40,6 +41,7 @@ import org.xwiki.rendering.renderer.printer.WikiPrinter;
 import org.xwiki.rendering.syntax.Syntax;
 import org.xwiki.rendering.transformation.Transformation;
 import org.xwiki.rendering.transformation.TransformationContext;
+import org.xwiki.rendering.util.ErrorBlockGenerator;
 import org.xwiki.test.annotation.AllComponents;
 import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
@@ -54,30 +56,35 @@ import static org.junit.Assert.assertEquals;
 public class NumberedHeadingsTransformationTest
 {
     @Rule
-    public MockitoComponentMockingRule<Transformation> mocker =
-        new MockitoComponentMockingRule<>(NumberedHeadingsTransformation.class);
+    public MockitoComponentMockingRule<Transformation> mocker = new MockitoComponentMockingRule<>(
+        NumberedHeadingsTransformation.class, Arrays.asList(ErrorBlockGenerator.class));
 
     @Test
     public void transform() throws Exception
     {
-        String content = "Something\n\n"
+        String content = "See section {{reference section='C'/}}. Invalid {{reference section='invalid'/}}.\n\n"
             + "= heading A =\n"
             + "== heading B ==\n"
-            + "== heading C ==\n"
+            + "== {{id name='C'/}}heading C ==\n"
             + "=== heading D ===\n";
 
         Parser parser = this.mocker.getInstance(Parser.class, "xwiki/2.1");
         XDOM xdom = parser.parse(new StringReader(content));
+        // Execute the Macro transformation
+        MacroTransformation macroTransformation = this.mocker.getInstance(Transformation.class, "macro");
+        macroTransformation.transform(xdom, new TransformationContext());
 
         this.mocker.getComponentUnderTest().transform(xdom, new TransformationContext());
         WikiPrinter printer = new DefaultWikiPrinter();
         BlockRenderer renderer = this.mocker.getInstance(BlockRenderer.class, Syntax.XWIKI_2_1.toIdString());
         renderer.render(xdom, printer);
 
-        String expectedContent = "Something\n\n"
+        String expectedContent = "See section [[1.2.1>>doc:||anchor=\"C\"]]. "
+                + "Invalid (% class=\"xwikirenderingerror\" %)No section id named [invalid] was found"
+                    + "(% class=\"xwikirenderingerrordescription hidden\" %){{{Verify the section id used.}}}(%%).\n\n"
             + "= (% class=\"numbered-reference\" %)1(%%) heading A =\n\n"
             + "== (% class=\"numbered-reference\" %)1.1(%%) heading B ==\n\n"
-            + "== (% class=\"numbered-reference\" %)1.2(%%) heading C ==\n\n"
+            + "== (% class=\"numbered-reference\" %)1.2(%%) {{id name=\"C\"/}}heading C ==\n\n"
             + "=== (% class=\"numbered-reference\" %)1.2.1(%%) heading D ===";
 
         assertEquals(expectedContent, printer.toString());
