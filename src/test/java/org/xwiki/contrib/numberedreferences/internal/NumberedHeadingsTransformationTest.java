@@ -46,6 +46,7 @@ import org.xwiki.test.annotation.AllComponents;
 import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Integration tests for {@link NumberedHeadingsTransformation}.
@@ -76,13 +77,14 @@ public class NumberedHeadingsTransformationTest
         macroTransformation.transform(xdom, new TransformationContext());
 
         this.mocker.getComponentUnderTest().transform(xdom, new TransformationContext());
+
+        // First, verify that the headings have had numbers added to them.
         WikiPrinter printer = new DefaultWikiPrinter();
         BlockRenderer renderer = this.mocker.getInstance(BlockRenderer.class, Syntax.XWIKI_2_1.toIdString());
         renderer.render(xdom, printer);
 
-        String expectedContent = "See section [[1.2>>doc:||anchor=\"C\"]]. "
-                + "Invalid (% class=\"xwikirenderingerror\" %)No section id named [invalid] was found"
-                    + "(% class=\"xwikirenderingerrordescription hidden\" %){{{Verify the section id used.}}}(%%).\n\n"
+        String expectedContent =
+            "See section {{reference section=\"C\"/}}. Invalid {{reference section=\"invalid\"/}}.\n\n"
             + "= (% class=\"numbered-reference\" %)1(%%) heading A =\n\n"
             + "== (% class=\"numbered-reference\" %)1.1(%%) heading B ==\n\n"
             + "== (% class=\"numbered-reference\" %)1.2(%%) {{id name=\"C\"/}}heading C ==\n\n"
@@ -90,6 +92,34 @@ public class NumberedHeadingsTransformationTest
             + "= (% class=\"numbered-reference\" %)2(%%) heading E =";
 
         assertEquals(expectedContent, printer.toString());
+
+        // Second, verify that the reference macros have been correctly replaced
+        printer = new DefaultWikiPrinter();
+        renderer = this.mocker.getInstance(BlockRenderer.class, Syntax.EVENT_1_0.toIdString());
+        renderer.render(xdom, printer);
+
+        String expectedContent1 = "beginMacroMarkerInline [reference] [section=C]\n"
+            + "beginLink [Typed = [true] Type = [doc] Reference = [] Parameters = [[anchor] = [C]]] [false]\n"
+            + "onWord [1]\n"
+            + "onSpecialSymbol [.]\n"
+            + "onWord [2]\n"
+            + "endLink [Typed = [true] Type = [doc] Reference = [] Parameters = [[anchor] = [C]]] [false]\n"
+            + "endMacroMarkerInline [reference] [section=C]\n";
+
+        assertTrue("Should have contained [\n" + expectedContent1 + "\n]. Got [\n" + printer.toString() + "\n]",
+            printer.toString().contains(expectedContent1));
+
+        String expectedContent2 = "beginMacroMarkerInline [reference] [section=invalid]\n"
+            + "beginFormat [NONE] [[class]=[xwikirenderingerror]]\n"
+            + "onWord [No section id named [invalid] was found]\n"
+            + "endFormat [NONE] [[class]=[xwikirenderingerror]]\n"
+            + "beginFormat [NONE] [[class]=[xwikirenderingerrordescription hidden]]\n"
+            + "onVerbatim [Verify the section id used.] [true]\n"
+            + "endFormat [NONE] [[class]=[xwikirenderingerrordescription hidden]]\n"
+            + "endMacroMarkerInline [reference] [section=invalid]\n";
+
+        assertTrue("Should have contained [\n" + expectedContent2 + "\n]. Got [\n" + printer.toString() + "\n]",
+            printer.toString().contains(expectedContent2));
     }
 
     @Test

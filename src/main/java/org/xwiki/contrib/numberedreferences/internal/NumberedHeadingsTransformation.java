@@ -20,6 +20,7 @@
 package org.xwiki.contrib.numberedreferences.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -162,13 +163,13 @@ public class NumberedHeadingsTransformation extends AbstractTransformation
                 String description = "Verify the section id used.";
                 List<Block> errorBlocks =
                     this.errorBlockGenerator.generateErrorBlocks(message, description, referenceParentBlock.isInline());
-                referenceParentBlock.getParent().replaceChild(errorBlocks, referenceParentBlock);
+                referenceParentBlock.setChildren(errorBlocks);
             } else {
                 // Add the LinkBlock
                 DocumentResourceReference resourceReference = new DocumentResourceReference("");
                 resourceReference.setAnchor(id);
                 LinkBlock linkBlock = new LinkBlock(numberBlocks, resourceReference, false);
-                referenceParentBlock.getParent().replaceChild(linkBlock, referenceParentBlock);
+                referenceParentBlock.setChildren(Arrays.asList(linkBlock));
             }
         }
     }
