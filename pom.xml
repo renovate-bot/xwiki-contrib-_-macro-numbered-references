@@ -25,7 +25,7 @@
   <parent>
     <groupId>org.xwiki.contrib</groupId>
     <artifactId>parent-platform</artifactId>
-    <version>9.11-4</version>
+    <version>10.2-SNAPSHOT</version>
   </parent>
   <artifactId>macro-numbered-references</artifactId>
   <version>1.2-SNAPSHOT</version>
@@ -61,6 +61,11 @@
       <artifactId>xwiki-rendering-transformation-macro</artifactId>
       <version>${rendering.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-localization-api</artifactId>
+      <version>${platform.version}</version>
+    </dependency>
     <!-- Test dependencies -->
     <dependency>
       <groupId>org.xwiki.commons</groupId>
@@ -83,6 +88,12 @@
     <dependency>
       <groupId>org.xwiki.rendering</groupId>
       <artifactId>xwiki-rendering-macro-id</artifactId>
+      <version>${rendering.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.rendering</groupId>
+      <artifactId>xwiki-rendering-macro-figure</artifactId>
       <version>${rendering.version}</version>
       <scope>test</scope>
     </dependency>

@@ -20,7 +20,9 @@
 package org.xwiki.contrib.numberedreferences.internal;
 
 import org.xwiki.properties.annotation.PropertyDescription;
-import org.xwiki.properties.annotation.PropertyMandatory;
+
+import static org.xwiki.contrib.numberedreferences.internal.ReferenceType.FIGURE;
+import static org.xwiki.contrib.numberedreferences.internal.ReferenceType.SECTION;
 
 /**
  * Parameters for the {@link ReferenceMacro} Macro.
@@ -31,25 +33,82 @@ import org.xwiki.properties.annotation.PropertyMandatory;
 public class ReferenceMacroParameters
 {
     /**
-     * The id of the section to link to.
+     * The id to link to.
      */
-    private String section;
+    private String id;
+
+    /**
+     * The type of id to link to (section, figure, etc).
+     */
+    private ReferenceType type;
 
     /**
      * @param section the id of the section to link to
      */
-    @PropertyMandatory
-    @PropertyDescription("id of the section to link to")
+    @PropertyDescription("Id of the section to link to")
     public void setSection(String section)
     {
-        this.section = section;
+        this.id = section;
+        this.type = SECTION;
     }
 
     /**
-     * @return the id of the section to link to
+     * @param figure the id of the figure to link to
+     */
+    @PropertyDescription("Id of the figure to link to")
+    public void setFigure(String figure)
+    {
+        this.id = figure;
+        this.type = FIGURE;
+    }
+
+    /**
+     * @param id the id to link to
+     */
+    @PropertyDescription("Id to link to")
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+
+    /**
+     * @param type the type of id to link to (section, figure, etc).
+     */
+    @PropertyDescription("Type of id to link to (section, figure, etc).")
+    public void setType(ReferenceType type)
+    {
+        this.type = type;
+    }
+
+    /**
+     * @return the id to link to
      */
     public String getSection()
     {
-        return this.section;
+        return getId();
+    }
+
+    /**
+     * @return the id to link to
+     */
+    public String getFigure()
+    {
+        return getId();
+    }
+
+    /**
+     * @return the id to link to
+     */
+    public String getId()
+    {
+        return this.id;
+    }
+
+    /**
+     * @return the type of id to link to (section, figure, etc).
+     */
+    public ReferenceType getType()
+    {
+        return this.type;
     }
 }

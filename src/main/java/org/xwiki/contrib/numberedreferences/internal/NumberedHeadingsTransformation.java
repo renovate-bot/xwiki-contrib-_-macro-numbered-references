@@ -20,7 +20,6 @@
 package org.xwiki.contrib.numberedreferences.internal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -37,20 +35,14 @@ import org.xwiki.rendering.block.Block;
 import org.xwiki.rendering.block.FormatBlock;
 import org.xwiki.rendering.block.HeaderBlock;
 import org.xwiki.rendering.block.IdBlock;
-import org.xwiki.rendering.block.LinkBlock;
-import org.xwiki.rendering.block.MacroMarkerBlock;
-import org.xwiki.rendering.block.SectionBlock;
 import org.xwiki.rendering.block.SpaceBlock;
 import org.xwiki.rendering.block.SpecialSymbolBlock;
 import org.xwiki.rendering.block.WordBlock;
 import org.xwiki.rendering.block.match.BlockMatcher;
 import org.xwiki.rendering.block.match.ClassBlockMatcher;
 import org.xwiki.rendering.listener.Format;
-import org.xwiki.rendering.listener.reference.DocumentResourceReference;
-import org.xwiki.rendering.transformation.AbstractTransformation;
 import org.xwiki.rendering.transformation.TransformationContext;
 import org.xwiki.rendering.transformation.TransformationException;
-import org.xwiki.rendering.util.ErrorBlockGenerator;
 
 /**
  * Find all headings, create numbers (and support nested numbering with the dot notation, e.g. {@code 1.1.1.1}) for
@@ -62,28 +54,15 @@ import org.xwiki.rendering.util.ErrorBlockGenerator;
 @Component
 @Named("numberedheadings")
 @Singleton
-public class NumberedHeadingsTransformation extends AbstractTransformation
+public class NumberedHeadingsTransformation extends AbstractNumberedTransformation
 {
     private static final String CLASS = "class";
 
-    private static final String CLASS_VALUE = "numbered-reference";
+    private static final String CLASS_VALUE = "numbered-section-reference";
 
     private static final BlockMatcher HEADINGBLOCK_MATCHER = new ClassBlockMatcher(HeaderBlock.class);
 
-    private static final BlockMatcher SECTIONBLOCK_MATCHER = new ClassBlockMatcher(SectionBlock.class);
-
     private static final SpecialSymbolBlock DOT_BLOCK = new SpecialSymbolBlock('.');
-
-    @Inject
-    private ErrorBlockGenerator errorBlockGenerator;
-
-    @Override
-    public int getPriority()
-    {
-        // Use a high value so that it's executed last so that the Macro transformation and any other transformations
-        // can contribute headings to the XDOM and thus they can be numbered too.
-        return 2000;
-    }
 
     @Override
     public void transform(Block block, TransformationContext context) throws TransformationException
@@ -143,35 +122,7 @@ public class NumberedHeadingsTransformation extends AbstractTransformation
         }
 
         // Step 4: Replace the ReferenceBlock with links
-        replaceReferenceBlocks(block, headingNumbers);
-    }
-
-    private void replaceReferenceBlocks(Block block, Map<String, List<Block>> headingNumbers)
-    {
-        List<Block> referenceBlocks =
-            block.getBlocks(new ClassBlockMatcher(ReferenceBlock.class), Block.Axes.DESCENDANT);
-        for (Block untypedReferenceBlock : referenceBlocks) {
-            // Replace the ReferenceBlock blocks with a LinkBlock, if we can find a matching reference.
-            // Otherwise return some error blocks.
-            ReferenceBlock referenceBlock = (ReferenceBlock) untypedReferenceBlock;
-            String id = referenceBlock.getId();
-            List<Block> numberBlocks = headingNumbers.get(id);
-            MacroMarkerBlock referenceParentBlock = (MacroMarkerBlock) referenceBlock.getParent();
-            if (numberBlocks == null) {
-                // Generate error blocks
-                String message = String.format("No section id named [%s] was found", id);
-                String description = "Verify the section id used.";
-                List<Block> errorBlocks =
-                    this.errorBlockGenerator.generateErrorBlocks(message, description, referenceParentBlock.isInline());
-                referenceParentBlock.setChildren(errorBlocks);
-            } else {
-                // Add the LinkBlock
-                DocumentResourceReference resourceReference = new DocumentResourceReference("");
-                resourceReference.setAnchor(id);
-                LinkBlock linkBlock = new LinkBlock(numberBlocks, resourceReference, false);
-                referenceParentBlock.setChildren(Arrays.asList(linkBlock));
-            }
-        }
+        replaceReferenceBlocks(block, headingNumbers, "section");
     }
 
     private List<Block> serializeNumber(Stack<Integer> number)
@@ -190,23 +141,5 @@ public class NumberedHeadingsTransformation extends AbstractTransformation
     private Block serializeAndFormatNumber(Stack<Integer> number)
     {
         return new FormatBlock(serializeNumber(number), Format.NONE, Collections.singletonMap(CLASS, CLASS_VALUE));
-    }
-
-    // TODO: Remove this when https://jira.xwiki.org/browse/XWIKI-15093 is implemented
-    private boolean isInsProtectedBlock(Block block)
-    {
-        Block currentBlock = block;
-        while (currentBlock != null) {
-            if (isProtectedBlock(currentBlock)) {
-                return true;
-            }
-            currentBlock = currentBlock.getParent();
-        }
-        return false;
-    }
-
-    private boolean isProtectedBlock(Block block)
-    {
-        return (block instanceof MacroMarkerBlock) && "code".equals(((MacroMarkerBlock) block).getId());
     }
 }

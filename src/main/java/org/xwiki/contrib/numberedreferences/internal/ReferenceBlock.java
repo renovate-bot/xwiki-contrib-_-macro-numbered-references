@@ -38,12 +38,16 @@ public class ReferenceBlock extends AbstractBlock
      */
     private String id;
 
+    private ReferenceType type;
+
     /**
-     * @param id the unique id for the reference/location.
+     * @param id the unique id for the reference/location
+     * @param type the type of id (section, figure, etc)
      */
-    public ReferenceBlock(String id)
+    public ReferenceBlock(String id, ReferenceType type)
     {
         this.id = id;
+        this.type = type;
     }
 
     /**
@@ -52,6 +56,14 @@ public class ReferenceBlock extends AbstractBlock
     public String getId()
     {
         return this.id;
+    }
+
+    /**
+     * @return the type of id (section, figure, etc)
+     */
+    public ReferenceType getType()
+    {
+        return this.type;
     }
 
     @Override

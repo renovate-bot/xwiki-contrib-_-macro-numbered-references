@@ -41,7 +41,6 @@ import org.xwiki.rendering.renderer.printer.WikiPrinter;
 import org.xwiki.rendering.syntax.Syntax;
 import org.xwiki.rendering.transformation.Transformation;
 import org.xwiki.rendering.transformation.TransformationContext;
-import org.xwiki.rendering.util.ErrorBlockGenerator;
 import org.xwiki.test.annotation.AllComponents;
 import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
@@ -58,7 +57,7 @@ public class NumberedHeadingsTransformationTest
 {
     @Rule
     public MockitoComponentMockingRule<Transformation> mocker = new MockitoComponentMockingRule<>(
-        NumberedHeadingsTransformation.class, Arrays.asList(ErrorBlockGenerator.class));
+        NumberedHeadingsTransformation.class);
 
     @Test
     public void transform() throws Exception
@@ -85,11 +84,11 @@ public class NumberedHeadingsTransformationTest
 
         String expectedContent =
             "See section {{reference section=\"C\"/}}. Invalid {{reference section=\"invalid\"/}}.\n\n"
-            + "= (% class=\"numbered-reference\" %)1(%%) heading A =\n\n"
-            + "== (% class=\"numbered-reference\" %)1.1(%%) heading B ==\n\n"
-            + "== (% class=\"numbered-reference\" %)1.2(%%) {{id name=\"C\"/}}heading C ==\n\n"
-            + "=== (% class=\"numbered-reference\" %)1.2.1(%%) heading D ===\n\n"
-            + "= (% class=\"numbered-reference\" %)2(%%) heading E =";
+            + "= (% class=\"numbered-section-reference\" %)1(%%) heading A =\n\n"
+            + "== (% class=\"numbered-section-reference\" %)1.1(%%) heading B ==\n\n"
+            + "== (% class=\"numbered-section-reference\" %)1.2(%%) {{id name=\"C\"/}}heading C ==\n\n"
+            + "=== (% class=\"numbered-section-reference\" %)1.2.1(%%) heading D ===\n\n"
+            + "= (% class=\"numbered-section-reference\" %)2(%%) heading E =";
 
         assertEquals(expectedContent, printer.toString());
 

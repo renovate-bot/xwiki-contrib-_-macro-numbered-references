@@ -28,7 +28,6 @@ import javax.inject.Singleton;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.rendering.block.Block;
 import org.xwiki.rendering.macro.AbstractMacro;
-import org.xwiki.rendering.macro.MacroExecutionException;
 import org.xwiki.rendering.transformation.MacroTransformationContext;
 
 /**
@@ -65,12 +64,12 @@ public class ReferenceMacro extends AbstractMacro<ReferenceMacroParameters>
 
     @Override
     public List<Block> execute(ReferenceMacroParameters parameters, String content, MacroTransformationContext context)
-        throws MacroExecutionException
     {
-        // We pass the section id inside a custo ReferenceBlock.
-        // It'll be the "numberedheadings" transformation's goal to modify the XDOM for the macro when it executes,
-        // thus computing the section number and replacing the ReferenceBlock with a LinkBlock.
-        ReferenceBlock block = new ReferenceBlock(parameters.getSection());
+        // We pass the id inside a custom ReferenceBlock.
+        // It'll be the "numberedheadings" and "numberedfigures" transformations's goals to modify the XDOM for the
+        // macro when it executes, thus computing the section/figure number and replacing the ReferenceBlock with a
+        // LinkBlock.
+        ReferenceBlock block = new ReferenceBlock(parameters.getId(), parameters.getType());
         return Collections.singletonList(block);
     }
 }
