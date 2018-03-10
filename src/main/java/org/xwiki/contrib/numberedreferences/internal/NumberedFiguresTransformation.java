@@ -44,6 +44,7 @@ import org.xwiki.rendering.block.WordBlock;
 import org.xwiki.rendering.block.match.BlockMatcher;
 import org.xwiki.rendering.block.match.ClassBlockMatcher;
 import org.xwiki.rendering.listener.Format;
+import org.xwiki.rendering.marcro.figure.FigureTypeRecognizer;
 import org.xwiki.rendering.transformation.TransformationContext;
 import org.xwiki.rendering.transformation.TransformationException;
 
@@ -63,12 +64,19 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
 
     private static final String CLASS = "class";
 
-    private static final String CLASS_VALUE = "numbered-figure-reference";
+    private static final String FIGURE_CLASS_VALUE = "numbered-figure-reference";
+
+    private static final String TABLE_CLASS_VALUE = "numbered-table-reference";
 
     private static final String FIGURE_TRANSLATION_KEY = "transformation.numberedReferences.figurePrefix";
 
+    private static final String TABLE_TRANSLATION_KEY = "transformation.numberedReferences.tablePrefix";
+
     @Inject
     private ContextualLocalizationManager localizationManager;
+
+    @Inject
+    private FigureTypeRecognizer figureTypeRecognizer;
 
     @Override
     public void transform(Block block, TransformationContext context) throws TransformationException
@@ -92,7 +100,7 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
             FigureCaptionBlock figureCaptionBlock = getFigureCaptionBlock(figureBlock);
             if (figureCaptionBlock != null) {
                 figureCaptionBlock.insertChildBefore(new SpaceBlock(), figureCaptionBlock.getChildren().get(0));
-                figureCaptionBlock.insertChildBefore(serializeAndFormatNumber(number),
+                figureCaptionBlock.insertChildBefore(serializeAndFormatNumber(number, figureBlock),
                     figureCaptionBlock.getChildren().get(0));
 
             }
@@ -109,14 +117,17 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
         replaceReferenceBlocks(block, figureNumbers, "figure");
     }
 
-    private Block serializeAndFormatNumber(int number)
+    private Block serializeAndFormatNumber(int number, FigureBlock figureBlock)
     {
-        Translation translation = this.localizationManager.getTranslation(FIGURE_TRANSLATION_KEY);
+        boolean isTable = this.figureTypeRecognizer.isTable(figureBlock);
+        String key = isTable ? TABLE_TRANSLATION_KEY : FIGURE_TRANSLATION_KEY;
+        Translation translation = this.localizationManager.getTranslation(key);
         List<Block> blocks = new ArrayList<>();
         blocks.add(translation.render());
         blocks.add(new SpaceBlock());
         blocks.add(serializeNumber(number));
-        return new FormatBlock(blocks, Format.NONE, Collections.singletonMap(CLASS, CLASS_VALUE));
+        String classValue = isTable ? TABLE_CLASS_VALUE : FIGURE_CLASS_VALUE;
+        return new FormatBlock(blocks, Format.NONE, Collections.singletonMap(CLASS, classValue));
     }
 
     private Block serializeNumber(int number)

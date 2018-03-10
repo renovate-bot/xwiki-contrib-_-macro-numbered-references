@@ -69,11 +69,16 @@ public class NumberedFiguresTransformationTest
     {
         ContextualLocalizationManager localizationManager =
             this.mocker.registerMockComponent(ContextualLocalizationManager.class);
-        Translation translation = mock(Translation.class);
-        when(translation.render()).thenReturn(new CompositeBlock(Arrays.asList(
+        Translation translation1 = mock(Translation.class);
+        when(translation1.render()).thenReturn(new CompositeBlock(Arrays.asList(
             new WordBlock("Figure"), new SpecialSymbolBlock(':'))));
         when(localizationManager.getTranslation("transformation.numberedReferences.figurePrefix")).thenReturn(
-            translation);
+            translation1);
+        Translation translation2 = mock(Translation.class);
+        when(translation2.render()).thenReturn(new CompositeBlock(Arrays.asList(
+            new WordBlock("Table"), new SpecialSymbolBlock(':'))));
+        when(localizationManager.getTranslation("transformation.numberedReferences.tablePrefix")).thenReturn(
+            translation2);
     }
 
     @Test
@@ -153,6 +158,94 @@ public class NumberedFiguresTransformationTest
                 + "{{id name='F1'/}}Nice image\n"
                 + "{{/figureCaption}}]\n"
                 + "endDocument [[syntax]=[XWiki 2.1]]";
+
+        assertEquals(expectedContent, printer.toString());
+    }
+
+    @Test
+    public void transformWhenTableFigure() throws Exception
+    {
+        String content = "See table {{reference figure='T1'/}}. Invalid {{reference figure='invalid'/}}.\n\n"
+            + "{{figure}}\n"
+            + "|a|b\n\n"
+            + "{{figureCaption}}\n"
+            + "{{id name='T1'/}}Nice table\n"
+            + "{{/figureCaption}}\n"
+            + "{{/figure}}";
+
+        Parser parser = this.mocker.getInstance(Parser.class, "xwiki/2.1");
+        XDOM xdom = parser.parse(new StringReader(content));
+        // Execute the Macro transformation
+        MacroTransformation macroTransformation = this.mocker.getInstance(Transformation.class, "macro");
+        macroTransformation.transform(xdom, new TransformationContext());
+
+        this.mocker.getComponentUnderTest().transform(xdom, new TransformationContext());
+
+        WikiPrinter printer = new DefaultWikiPrinter();
+        BlockRenderer renderer = this.mocker.getInstance(BlockRenderer.class, Syntax.EVENT_1_0.toIdString());
+        renderer.render(xdom, printer);
+
+        String expectedContent = "beginDocument [[syntax]=[XWiki 2.1]]\n"
+            + "beginParagraph\n"
+            + "onWord [See]\n"
+            + "onSpace\n"
+            + "onWord [table]\n"
+            + "onSpace\n"
+            + "beginMacroMarkerInline [reference] [figure=T1]\n"
+            + "beginLink [Typed = [true] Type = [doc] Reference = [] Parameters = [[anchor] = [T1]]] [false]\n"
+            + "onWord [1]\n"
+            + "endLink [Typed = [true] Type = [doc] Reference = [] Parameters = [[anchor] = [T1]]] [false]\n"
+            + "endMacroMarkerInline [reference] [figure=T1]\n"
+            + "onSpecialSymbol [.]\n"
+            + "onSpace\n"
+            + "onWord [Invalid]\n"
+            + "onSpace\n"
+            + "beginMacroMarkerInline [reference] [figure=invalid]\n"
+            + "beginFormat [NONE] [[class]=[xwikirenderingerror]]\n"
+            + "onWord [No figure id named [invalid] was found]\n"
+            + "endFormat [NONE] [[class]=[xwikirenderingerror]]\n"
+            + "beginFormat [NONE] [[class]=[xwikirenderingerrordescription hidden]]\n"
+            + "onVerbatim [Verify the figure id used.] [true]\n"
+            + "endFormat [NONE] [[class]=[xwikirenderingerrordescription hidden]]\n"
+            + "endMacroMarkerInline [reference] [figure=invalid]\n"
+            + "onSpecialSymbol [.]\n"
+            + "endParagraph\n"
+            + "beginMacroMarkerStandalone [figure] [] [|a|b\n"
+            + "\n"
+            + "{{figureCaption}}\n"
+            + "{{id name='T1'/}}Nice table\n"
+            + "{{/figureCaption}}]\n"
+            + "beginTable\n"
+            + "beginTableRow\n"
+            + "beginTableCell\n"
+            + "onWord [a]\n"
+            + "endTableCell\n"
+            + "beginTableCell\n"
+            + "onWord [b]\n"
+            + "endTableCell\n"
+            + "endTableRow\n"
+            + "endTable\n"
+            + "beginMacroMarkerStandalone [figureCaption] [] [{{id name='T1'/}}Nice table]\n"
+            + "beginFormat [NONE] [[class]=[numbered-table-reference]]\n"
+            + "onWord [Table]\n"
+            + "onSpecialSymbol [:]\n"
+            + "onSpace\n"
+            + "onWord [1]\n"
+            + "endFormat [NONE] [[class]=[numbered-table-reference]]\n"
+            + "onSpace\n"
+            + "beginMacroMarkerInline [id] [name=T1]\n"
+            + "onId [T1]\n"
+            + "endMacroMarkerInline [id] [name=T1]\n"
+            + "onWord [Nice]\n"
+            + "onSpace\n"
+            + "onWord [table]\n"
+            + "endMacroMarkerStandalone [figureCaption] [] [{{id name='T1'/}}Nice table]\n"
+            + "endMacroMarkerStandalone [figure] [] [|a|b\n"
+            + "\n"
+            + "{{figureCaption}}\n"
+            + "{{id name='T1'/}}Nice table\n"
+            + "{{/figureCaption}}]\n"
+            + "endDocument [[syntax]=[XWiki 2.1]]";
 
         assertEquals(expectedContent, printer.toString());
     }

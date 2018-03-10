@@ -32,7 +32,7 @@
   <name>Numbered Reference Macro</name>
   <description>Provides numbered headings and more generally allow to number anything</description>
   <properties>
-    <xwiki.jacoco.instructionRatio>0.82</xwiki.jacoco.instructionRatio>
+    <xwiki.jacoco.instructionRatio>0.91</xwiki.jacoco.instructionRatio>
     <!-- Extension Manager category -->
     <xwiki.extension.category>macro</xwiki.extension.category>
     <xwiki.issueManagement.system>jira</xwiki.issueManagement.system>
@@ -66,6 +66,11 @@
       <artifactId>xwiki-platform-localization-api</artifactId>
       <version>${platform.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.xwiki.rendering</groupId>
+      <artifactId>xwiki-rendering-macro-figure</artifactId>
+      <version>${rendering.version}</version>
+    </dependency>
     <!-- Test dependencies -->
     <dependency>
       <groupId>org.xwiki.commons</groupId>
@@ -88,12 +93,6 @@
     <dependency>
       <groupId>org.xwiki.rendering</groupId>
       <artifactId>xwiki-rendering-macro-id</artifactId>
-      <version>${rendering.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.rendering</groupId>
-      <artifactId>xwiki-rendering-macro-figure</artifactId>
       <version>${rendering.version}</version>
       <scope>test</scope>
     </dependency>
