@@ -84,11 +84,11 @@ public class NumberedHeadingsTransformationTest
 
         String expectedContent =
             "See section {{reference section=\"C\"/}}. Invalid {{reference section=\"invalid\"/}}.\n\n"
-            + "= (% class=\"wikigeneratedheadingnumber\" %)1(%%) heading A =\n\n"
-            + "== (% class=\"wikigeneratedheadingnumber\" %)1.1(%%) heading B ==\n\n"
-            + "== (% class=\"wikigeneratedheadingnumber\" %)1.2(%%) {{id name=\"C\"/}}heading C ==\n\n"
-            + "=== (% class=\"wikigeneratedheadingnumber\" %)1.2.1(%%) heading D ===\n\n"
-            + "= (% class=\"wikigeneratedheadingnumber\" %)2(%%) heading E =";
+            + "= (% class=\"wikigeneratedheadingnumber\" %)1 (%%)heading A =\n\n"
+            + "== (% class=\"wikigeneratedheadingnumber\" %)1.1 (%%)heading B ==\n\n"
+            + "== (% class=\"wikigeneratedheadingnumber\" %)1.2 (%%){{id name=\"C\"/}}heading C ==\n\n"
+            + "=== (% class=\"wikigeneratedheadingnumber\" %)1.2.1 (%%)heading D ===\n\n"
+            + "= (% class=\"wikigeneratedheadingnumber\" %)2 (%%)heading E =";
 
         assertEquals(expectedContent, printer.toString());
 

@@ -105,8 +105,6 @@ public class NumberedHeadingsTransformation extends AbstractNumberedTransformati
             }
 
             // Step 2: Insert the number in the header
-            // Start by adding a space so that we have <number><space><rest of what was there before>
-            headerBlock.insertChildBefore(new SpaceBlock(), headerBlock.getChildren().get(0));
             headerBlock.insertChildBefore(serializeAndFormatNumber(number), headerBlock.getChildren().get(0));
 
             // Step 3: Save in our cache the ids representing this section. We save the following keys in the cache:
@@ -140,6 +138,9 @@ public class NumberedHeadingsTransformation extends AbstractNumberedTransformati
 
     private Block serializeAndFormatNumber(Stack<Integer> number)
     {
-        return new FormatBlock(serializeNumber(number), Format.NONE, Collections.singletonMap(CLASS, CLASS_VALUE));
+        List<Block> blocks = new ArrayList<>();
+        blocks.addAll(serializeNumber(number));
+        blocks.add(new SpaceBlock());
+        return new FormatBlock(blocks, Format.NONE, Collections.singletonMap(CLASS, CLASS_VALUE));
     }
 }
