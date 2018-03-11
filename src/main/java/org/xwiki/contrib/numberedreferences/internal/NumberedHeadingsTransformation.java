@@ -58,7 +58,7 @@ public class NumberedHeadingsTransformation extends AbstractNumberedTransformati
 {
     private static final String CLASS = "class";
 
-    private static final String CLASS_VALUE = "numbered-section-reference";
+    private static final String CLASS_VALUE = "wikigeneratedheadingnumber";
 
     private static final BlockMatcher HEADINGBLOCK_MATCHER = new ClassBlockMatcher(HeaderBlock.class);
 

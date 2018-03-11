@@ -64,9 +64,9 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
 
     private static final String CLASS = "class";
 
-    private static final String FIGURE_CLASS_VALUE = "numbered-figure-reference";
+    private static final String FIGURE_CLASS_VALUE = "wikigeneratedfigurenumber";
 
-    private static final String TABLE_CLASS_VALUE = "numbered-table-reference";
+    private static final String TABLE_CLASS_VALUE = "wikigeneratedtablenumber";
 
     private static final String FIGURE_TRANSLATION_KEY = "transformation.numberedReferences.figurePrefix";
 
