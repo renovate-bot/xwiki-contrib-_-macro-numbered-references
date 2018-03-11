@@ -123,9 +123,8 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
         String key = isTable ? TABLE_TRANSLATION_KEY : FIGURE_TRANSLATION_KEY;
         Translation translation = this.localizationManager.getTranslation(key);
         List<Block> blocks = new ArrayList<>();
-        blocks.add(translation.render());
+        blocks.add(translation.render(number));
         blocks.add(new SpaceBlock());
-        blocks.add(serializeNumber(number));
         String classValue = isTable ? TABLE_CLASS_VALUE : FIGURE_CLASS_VALUE;
         return new FormatBlock(blocks, Format.NONE, Collections.singletonMap(CLASS, classValue));
     }

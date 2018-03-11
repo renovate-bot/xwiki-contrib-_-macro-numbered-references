@@ -26,6 +26,8 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.xwiki.localization.ContextualLocalizationManager;
 import org.xwiki.localization.Translation;
 import org.xwiki.rendering.block.Block;
@@ -33,6 +35,7 @@ import org.xwiki.rendering.block.CompositeBlock;
 import org.xwiki.rendering.block.FigureBlock;
 import org.xwiki.rendering.block.FigureCaptionBlock;
 import org.xwiki.rendering.block.MacroMarkerBlock;
+import org.xwiki.rendering.block.SpaceBlock;
 import org.xwiki.rendering.block.SpecialSymbolBlock;
 import org.xwiki.rendering.block.WordBlock;
 import org.xwiki.rendering.block.XDOM;
@@ -49,6 +52,7 @@ import org.xwiki.test.annotation.AllComponents;
 import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -69,14 +73,28 @@ public class NumberedFiguresTransformationTest
     {
         ContextualLocalizationManager localizationManager =
             this.mocker.registerMockComponent(ContextualLocalizationManager.class);
+
         Translation translation1 = mock(Translation.class);
-        when(translation1.render()).thenReturn(new CompositeBlock(Arrays.asList(
-            new WordBlock("Figure"), new SpecialSymbolBlock(':'))));
+        when(translation1.render(any(Integer.class))).thenAnswer(new Answer<Object>() {
+            @Override public Object answer(InvocationOnMock invocation)
+            {
+                int number = invocation.getArgument(0);
+                return new CompositeBlock(Arrays.asList(new WordBlock("Figure"), new SpaceBlock(),
+                    new WordBlock(String.valueOf(number)), new SpecialSymbolBlock(':')));
+            }
+        });
         when(localizationManager.getTranslation("transformation.numberedReferences.figurePrefix")).thenReturn(
             translation1);
+
         Translation translation2 = mock(Translation.class);
-        when(translation2.render()).thenReturn(new CompositeBlock(Arrays.asList(
-            new WordBlock("Table"), new SpecialSymbolBlock(':'))));
+        when(translation2.render(any(Integer.class))).thenAnswer(new Answer<Object>() {
+            @Override public Object answer(InvocationOnMock invocation)
+            {
+                int number = invocation.getArgument(0);
+                return new CompositeBlock(Arrays.asList(new WordBlock("Table"), new SpaceBlock(),
+                    new WordBlock(String.valueOf(number)), new SpecialSymbolBlock(':')));
+            }
+        });
         when(localizationManager.getTranslation("transformation.numberedReferences.tablePrefix")).thenReturn(
             translation2);
     }
@@ -140,9 +158,10 @@ public class NumberedFiguresTransformationTest
                 + "beginMacroMarkerStandalone [figureCaption] [] [{{id name='F1'/}}Nice image]\n"
                 + "beginFormat [NONE] [[class]=[numbered-figure-reference]]\n"
                 + "onWord [Figure]\n"
-                + "onSpecialSymbol [:]\n"
                 + "onSpace\n"
                 + "onWord [1]\n"
+                + "onSpecialSymbol [:]\n"
+                + "onSpace\n"
                 + "endFormat [NONE] [[class]=[numbered-figure-reference]]\n"
                 + "onSpace\n"
                 + "beginMacroMarkerInline [id] [name=F1]\n"
@@ -228,9 +247,10 @@ public class NumberedFiguresTransformationTest
             + "beginMacroMarkerStandalone [figureCaption] [] [{{id name='T1'/}}Nice table]\n"
             + "beginFormat [NONE] [[class]=[numbered-table-reference]]\n"
             + "onWord [Table]\n"
-            + "onSpecialSymbol [:]\n"
             + "onSpace\n"
             + "onWord [1]\n"
+            + "onSpecialSymbol [:]\n"
+            + "onSpace\n"
             + "endFormat [NONE] [[class]=[numbered-table-reference]]\n"
             + "onSpace\n"
             + "beginMacroMarkerInline [id] [name=T1]\n"
