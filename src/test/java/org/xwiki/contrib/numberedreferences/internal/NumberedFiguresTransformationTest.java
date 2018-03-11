@@ -271,6 +271,87 @@ public class NumberedFiguresTransformationTest
     }
 
     @Test
+    public void transformWhenBothFigureAndTable() throws Exception
+    {
+        String content = "{{figure}}\n"
+            + "[[image:whatever]]\n\n"
+            + "{{figureCaption}}Nice image{{/figureCaption}}\n"
+            + "{{/figure}}\n\n"
+            + "{{figure}}\n"
+            + "|a|b\n\n"
+            + "{{figureCaption}}Nice table{{/figureCaption}}\n"
+            + "{{/figure}}";
+
+        Parser parser = this.mocker.getInstance(Parser.class, "xwiki/2.1");
+        XDOM xdom = parser.parse(new StringReader(content));
+        // Execute the Macro transformation
+        MacroTransformation macroTransformation = this.mocker.getInstance(Transformation.class, "macro");
+        macroTransformation.transform(xdom, new TransformationContext());
+
+        this.mocker.getComponentUnderTest().transform(xdom, new TransformationContext());
+
+        WikiPrinter printer = new DefaultWikiPrinter();
+        BlockRenderer renderer = this.mocker.getInstance(BlockRenderer.class, Syntax.EVENT_1_0.toIdString());
+        renderer.render(xdom, printer);
+
+        String expectedContent = "beginDocument [[syntax]=[XWiki 2.1]]\n"
+            + "beginMacroMarkerStandalone [figure] [] [[[image:whatever]]\n"
+            + "\n"
+            + "{{figureCaption}}Nice image{{/figureCaption}}]\n"
+            + "beginParagraph\n"
+            + "onImage [Typed = [false] Type = [url] Reference = [whatever]] [false]\n"
+            + "endParagraph\n"
+            + "beginMacroMarkerStandalone [figureCaption] [] [Nice image]\n"
+            + "beginFormat [NONE] [[class]=[numbered-figure-reference]]\n"
+            + "onWord [Figure]\n"
+            + "onSpace\n"
+            + "onWord [1]\n"
+            + "onSpecialSymbol [:]\n"
+            + "onSpace\n"
+            + "endFormat [NONE] [[class]=[numbered-figure-reference]]\n"
+            + "onSpace\n"
+            + "onWord [Nice]\n"
+            + "onSpace\n"
+            + "onWord [image]\n"
+            + "endMacroMarkerStandalone [figureCaption] [] [Nice image]\n"
+            + "endMacroMarkerStandalone [figure] [] [[[image:whatever]]\n"
+            + "\n"
+            + "{{figureCaption}}Nice image{{/figureCaption}}]\n"
+            + "beginMacroMarkerStandalone [figure] [] [|a|b\n"
+            + "\n"
+            + "{{figureCaption}}Nice table{{/figureCaption}}]\n"
+            + "beginTable\n"
+            + "beginTableRow\n"
+            + "beginTableCell\n"
+            + "onWord [a]\n"
+            + "endTableCell\n"
+            + "beginTableCell\n"
+            + "onWord [b]\n"
+            + "endTableCell\n"
+            + "endTableRow\n"
+            + "endTable\n"
+            + "beginMacroMarkerStandalone [figureCaption] [] [Nice table]\n"
+            + "beginFormat [NONE] [[class]=[numbered-table-reference]]\n"
+            + "onWord [Table]\n"
+            + "onSpace\n"
+            + "onWord [1]\n"
+            + "onSpecialSymbol [:]\n"
+            + "onSpace\n"
+            + "endFormat [NONE] [[class]=[numbered-table-reference]]\n"
+            + "onSpace\n"
+            + "onWord [Nice]\n"
+            + "onSpace\n"
+            + "onWord [table]\n"
+            + "endMacroMarkerStandalone [figureCaption] [] [Nice table]\n"
+            + "endMacroMarkerStandalone [figure] [] [|a|b\n"
+            + "\n"
+            + "{{figureCaption}}Nice table{{/figureCaption}}]\n"
+            + "endDocument [[syntax]=[XWiki 2.1]]";
+
+        assertEquals(expectedContent, printer.toString());
+    }
+
+    @Test
     public void transformIgnoresProtectedContent() throws Exception
     {
         String expected = "beginDocument\n"

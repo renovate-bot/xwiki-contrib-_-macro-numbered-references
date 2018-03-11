@@ -86,7 +86,8 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
         // - For each FigureBlock, compute the figure number, cache it, and insert it in the associated
         //   FigureCaptionBlock (if any)
         Map<String, List<Block>> figureNumbers = new HashMap<>();
-        int number = 0;
+        int figureNumber = 0;
+        int tableNumber = 0;
         List<FigureBlock> figureBlocks = block.getBlocks(FIGUREBLOCK_MATCHER, Block.Axes.DESCENDANT);
         for (FigureBlock figureBlock : figureBlocks) {
 
@@ -94,13 +95,21 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
                 continue;
             }
 
-            number++;
+            boolean isTable = this.figureTypeRecognizer.isTable(figureBlock);
+            int number;
+            if (isTable) {
+                tableNumber++;
+                number = tableNumber;
+            } else {
+                figureNumber++;
+                number = figureNumber;
+            }
 
             // Update the FigureCaptionBlock (if any)
             FigureCaptionBlock figureCaptionBlock = getFigureCaptionBlock(figureBlock);
             if (figureCaptionBlock != null) {
                 figureCaptionBlock.insertChildBefore(new SpaceBlock(), figureCaptionBlock.getChildren().get(0));
-                figureCaptionBlock.insertChildBefore(serializeAndFormatNumber(number, figureBlock),
+                figureCaptionBlock.insertChildBefore(serializeAndFormatNumber(number, isTable),
                     figureCaptionBlock.getChildren().get(0));
 
             }
@@ -117,9 +126,8 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
         replaceReferenceBlocks(block, figureNumbers, "figure");
     }
 
-    private Block serializeAndFormatNumber(int number, FigureBlock figureBlock)
+    private Block serializeAndFormatNumber(int number, boolean isTable)
     {
-        boolean isTable = this.figureTypeRecognizer.isTable(figureBlock);
         String key = isTable ? TABLE_TRANSLATION_KEY : FIGURE_TRANSLATION_KEY;
         Translation translation = this.localizationManager.getTranslation(key);
         List<Block> blocks = new ArrayList<>();
