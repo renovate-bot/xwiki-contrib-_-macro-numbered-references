@@ -58,19 +58,12 @@ public abstract class AbstractNumberedTransformation extends AbstractTransformat
             block.getBlocks(new ClassBlockMatcher(ReferenceBlock.class), Block.Axes.DESCENDANT);
         for (Block untypedReferenceBlock : referenceBlocks) {
             // Replace the ReferenceBlock blocks with a LinkBlock, if we can find a matching reference.
-            // Otherwise return some error blocks.
+            // Otherwise don't do anything since another transformation might be a match.
             ReferenceBlock referenceBlock = (ReferenceBlock) untypedReferenceBlock;
             String id = referenceBlock.getId();
             List<Block> numberBlocks = numbers.get(id);
             MacroMarkerBlock referenceParentBlock = (MacroMarkerBlock) referenceBlock.getParent();
-            if (numberBlocks == null) {
-                // Generate error blocks
-                String message = String.format("No %s id named [%s] was found", typeName, id);
-                String description = String.format("Verify the %s id used.", typeName);
-                List<Block> errorBlocks =
-                    this.errorBlockGenerator.generateErrorBlocks(message, description, referenceParentBlock.isInline());
-                referenceParentBlock.setChildren(errorBlocks);
-            } else {
+            if (numberBlocks != null) {
                 // Add the LinkBlock
                 DocumentResourceReference resourceReference = new DocumentResourceReference("");
                 resourceReference.setAnchor(id);

@@ -109,12 +109,6 @@ public class NumberedHeadingsTransformationTest
             printer.toString().contains(expectedContent1));
 
         String expectedContent2 = "beginMacroMarkerInline [reference] [section=invalid]\n"
-            + "beginFormat [NONE] [[class]=[xwikirenderingerror]]\n"
-            + "onWord [No section id named [invalid] was found]\n"
-            + "endFormat [NONE] [[class]=[xwikirenderingerror]]\n"
-            + "beginFormat [NONE] [[class]=[xwikirenderingerrordescription hidden]]\n"
-            + "onVerbatim [Verify the section id used.] [true]\n"
-            + "endFormat [NONE] [[class]=[xwikirenderingerrordescription hidden]]\n"
             + "endMacroMarkerInline [reference] [section=invalid]\n";
 
         assertTrue("Should have contained [\n" + expectedContent2 + "\n]. Got [\n" + printer.toString() + "\n]",
