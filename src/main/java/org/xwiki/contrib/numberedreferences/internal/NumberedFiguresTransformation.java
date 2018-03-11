@@ -108,7 +108,6 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
             // Update the FigureCaptionBlock (if any)
             FigureCaptionBlock figureCaptionBlock = getFigureCaptionBlock(figureBlock);
             if (figureCaptionBlock != null) {
-                figureCaptionBlock.insertChildBefore(new SpaceBlock(), figureCaptionBlock.getChildren().get(0));
                 figureCaptionBlock.insertChildBefore(serializeAndFormatNumber(number, isTable),
                     figureCaptionBlock.getChildren().get(0));
 
