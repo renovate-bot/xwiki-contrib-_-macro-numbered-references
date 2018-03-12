@@ -30,7 +30,7 @@
   <artifactId>macro-numbered-references</artifactId>
   <version>1.2-SNAPSHOT</version>
   <name>Numbered Reference Macro</name>
-  <description>Provides numbered headings and more generally allow to number anything</description>
+  <description>Provides numbered headings, figures and tables and references to them</description>
   <properties>
     <xwiki.jacoco.instructionRatio>0.91</xwiki.jacoco.instructionRatio>
     <!-- Extension Manager category -->
