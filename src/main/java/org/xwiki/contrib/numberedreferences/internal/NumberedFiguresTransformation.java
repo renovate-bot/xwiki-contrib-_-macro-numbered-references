@@ -44,7 +44,7 @@ import org.xwiki.rendering.block.WordBlock;
 import org.xwiki.rendering.block.match.BlockMatcher;
 import org.xwiki.rendering.block.match.ClassBlockMatcher;
 import org.xwiki.rendering.listener.Format;
-import org.xwiki.rendering.marcro.figure.FigureTypeRecognizer;
+import org.xwiki.rendering.macro.figure.FigureTypeRecognizer;
 import org.xwiki.rendering.transformation.TransformationContext;
 import org.xwiki.rendering.transformation.TransformationException;
 
