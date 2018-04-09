@@ -140,4 +140,27 @@ public class NumberedHeadingsTransformationTest
 
         assertEquals(expected, printer.toString());
     }
+
+    @Test
+    public void transformWhenHeadingAlreadyTransformed() throws Exception
+    {
+        String content = "= (% class=\"wikigeneratedheadingnumber\" %)10.5 (%%)heading A =\n";
+
+        Parser parser = this.mocker.getInstance(Parser.class, "xwiki/2.1");
+        XDOM xdom = parser.parse(new StringReader(content));
+        // Execute the Macro transformation
+        MacroTransformation macroTransformation = this.mocker.getInstance(Transformation.class, "macro");
+        macroTransformation.transform(xdom, new TransformationContext());
+
+        this.mocker.getComponentUnderTest().transform(xdom, new TransformationContext());
+
+        // First, verify that the headings have had numbers added to them.
+        WikiPrinter printer = new DefaultWikiPrinter();
+        BlockRenderer renderer = this.mocker.getInstance(BlockRenderer.class, Syntax.XWIKI_2_1.toIdString());
+        renderer.render(xdom, printer);
+
+        String expectedContent = "= (% class=\"wikigeneratedheadingnumber\" %)1 (%%)heading A =";
+
+        assertEquals(expectedContent, printer.toString());
+    }
 }

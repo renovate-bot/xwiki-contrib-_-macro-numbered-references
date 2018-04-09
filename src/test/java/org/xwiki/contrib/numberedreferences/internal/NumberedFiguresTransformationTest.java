@@ -361,6 +361,59 @@ public class NumberedFiguresTransformationTest
         assertEquals(expected, printer.toString());
     }
 
+    @Test
+    public void transformWhenFigureCaptionAlreadyTransformed() throws Exception
+    {
+        String content = "{{figure}}\n"
+            + "[[image:whatever]]\n\n"
+            + "{{figureCaption}}\n"
+            + "(% class=\"wikigeneratedfigurenumber\" %)10.5 (%%)Nice image\n"
+            + "{{/figureCaption}}\n"
+            + "{{/figure}}";
+
+        Parser parser = this.mocker.getInstance(Parser.class, "xwiki/2.1");
+        XDOM xdom = parser.parse(new StringReader(content));
+        // Execute the Macro transformation
+        MacroTransformation macroTransformation = this.mocker.getInstance(Transformation.class, "macro");
+        macroTransformation.transform(xdom, new TransformationContext());
+
+        this.mocker.getComponentUnderTest().transform(xdom, new TransformationContext());
+
+        WikiPrinter printer = new DefaultWikiPrinter();
+        BlockRenderer renderer = this.mocker.getInstance(BlockRenderer.class, Syntax.EVENT_1_0.toIdString());
+        renderer.render(xdom, printer);
+
+        String expectedContent = "beginDocument [[syntax]=[XWiki 2.1]]\n"
+            + "beginMacroMarkerStandalone [figure] [] [[[image:whatever]]\n"
+            + "\n"
+            + "{{figureCaption}}\n"
+            + "(% class=\"wikigeneratedfigurenumber\" %)10.5 (%%)Nice image\n"
+            + "{{/figureCaption}}]\n"
+            + "beginParagraph\n"
+            + "onImage [Typed = [false] Type = [url] Reference = [whatever]] [false]\n"
+            + "endParagraph\n"
+            + "beginMacroMarkerStandalone [figureCaption] [] [(% class=\"wikigeneratedfigurenumber\" %)10.5 (%%)Nice image]\n"
+            + "beginFormat [NONE] [[class]=[wikigeneratedfigurenumber]]\n"
+            + "onWord [Figure]\n"
+            + "onSpace\n"
+            + "onWord [1]\n"
+            + "onSpecialSymbol [:]\n"
+            + "onSpace\n"
+            + "endFormat [NONE] [[class]=[wikigeneratedfigurenumber]]\n"
+            + "onWord [Nice]\n"
+            + "onSpace\n"
+            + "onWord [image]\n"
+            + "endMacroMarkerStandalone [figureCaption] [] [(% class=\"wikigeneratedfigurenumber\" %)10.5 (%%)Nice image]\n"
+            + "endMacroMarkerStandalone [figure] [] [[[image:whatever]]\n"
+            + "\n"
+            + "{{figureCaption}}\n"
+            + "(% class=\"wikigeneratedfigurenumber\" %)10.5 (%%)Nice image\n"
+            + "{{/figureCaption}}]\n"
+            + "endDocument [[syntax]=[XWiki 2.1]]";
+
+        assertEquals(expectedContent, printer.toString());
+    }
+
     private List<Block> blocks(Block... blocks)
     {
         return Arrays.asList(blocks);

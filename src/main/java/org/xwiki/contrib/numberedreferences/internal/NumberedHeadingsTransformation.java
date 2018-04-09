@@ -105,7 +105,7 @@ public class NumberedHeadingsTransformation extends AbstractNumberedTransformati
             }
 
             // Step 2: Insert the number in the header
-            headerBlock.insertChildBefore(serializeAndFormatNumber(number), headerBlock.getChildren().get(0));
+            insertHeaderNumber(headerBlock, number);
 
             // Step 3: Save in our cache the ids representing this section. We save the following keys in the cache:
             // - the header block id
@@ -121,6 +121,31 @@ public class NumberedHeadingsTransformation extends AbstractNumberedTransformati
 
         // Step 4: Replace the ReferenceBlock with links
         replaceReferenceBlocks(block, headingNumbers, "section");
+    }
+
+    private void insertHeaderNumber(HeaderBlock headerBlock, Stack<Integer> number)
+    {
+        // If there's already a number inserted, replace it. This can have been done by a macro that has executed
+        // transformations (such as the display macro or the context macro).
+        Block firstBlock = headerBlock.getChildren().get(0);
+        if (isGeneratedNumberBlock(firstBlock)) {
+            // Replace the content of the Format Block
+            headerBlock.replaceChild(serializeAndFormatNumber(number), firstBlock);
+        } else {
+            headerBlock.insertChildBefore(serializeAndFormatNumber(number), firstBlock);
+        }
+    }
+
+    private boolean isGeneratedNumberBlock(Block block)
+    {
+        boolean generated = false;
+        if (block instanceof FormatBlock) {
+            String classValue = block.getParameter(CLASS);
+            if (classValue.equals(CLASS_VALUE)) {
+                generated = true;
+            }
+        }
+        return generated;
     }
 
     private List<Block> serializeNumber(Stack<Integer> number)

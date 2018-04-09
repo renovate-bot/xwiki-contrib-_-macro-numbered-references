@@ -108,9 +108,7 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
             // Update the FigureCaptionBlock (if any)
             FigureCaptionBlock figureCaptionBlock = getFigureCaptionBlock(figureBlock);
             if (figureCaptionBlock != null) {
-                figureCaptionBlock.insertChildBefore(serializeAndFormatNumber(number, isTable),
-                    figureCaptionBlock.getChildren().get(0));
-
+                insertFigureCaptionNumber(figureCaptionBlock, number, isTable);
             }
 
             // Save in our cache the ids representing this figure by looking for all id macros defined inside the
@@ -125,6 +123,31 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
         replaceReferenceBlocks(block, figureNumbers, "figure");
     }
 
+    private void insertFigureCaptionNumber(FigureCaptionBlock figureCaptionBlock, int number, boolean isTable)
+    {
+        // If there's already a number inserted, replace it. This can have been done by a macro that has executed
+        // transformations (such as the display macro or the context macro).
+        Block firstBlock = figureCaptionBlock.getChildren().get(0);
+        if (isGeneratedNumberBlock(firstBlock, isTable)) {
+            // Replace the content of the Format Block
+            figureCaptionBlock.replaceChild(serializeAndFormatNumber(number, isTable), firstBlock);
+        } else {
+            figureCaptionBlock.insertChildBefore(serializeAndFormatNumber(number, isTable), firstBlock);
+        }
+    }
+
+    private boolean isGeneratedNumberBlock(Block block, boolean isTable)
+    {
+        boolean generated = false;
+        if (block instanceof FormatBlock) {
+            String classValue = block.getParameter(CLASS);
+            if (classValue.equals(getClassValue(isTable))) {
+                generated = true;
+            }
+        }
+        return generated;
+    }
+
     private Block serializeAndFormatNumber(int number, boolean isTable)
     {
         String key = isTable ? TABLE_TRANSLATION_KEY : FIGURE_TRANSLATION_KEY;
@@ -132,8 +155,12 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
         List<Block> blocks = new ArrayList<>();
         blocks.add(translation.render(number));
         blocks.add(new SpaceBlock());
-        String classValue = isTable ? TABLE_CLASS_VALUE : FIGURE_CLASS_VALUE;
-        return new FormatBlock(blocks, Format.NONE, Collections.singletonMap(CLASS, classValue));
+        return new FormatBlock(blocks, Format.NONE, Collections.singletonMap(CLASS, getClassValue(isTable)));
+    }
+
+    private String getClassValue(boolean isTable)
+    {
+        return isTable ? TABLE_CLASS_VALUE : FIGURE_CLASS_VALUE;
     }
 
     private Block serializeNumber(int number)
