@@ -31,6 +31,7 @@
   <version>1.4-SNAPSHOT</version>
   <name>Numbered Reference Macro</name>
   <description>Provides numbered headings, figures and tables and references to them</description>
+  <url>http://extensions.xwiki.org/xwiki/bin/view/Extension/Numbered%20Reference%20Macro/</url>
   <properties>
     <xwiki.jacoco.instructionRatio>0.92</xwiki.jacoco.instructionRatio>
     <!-- Extension Manager category -->
