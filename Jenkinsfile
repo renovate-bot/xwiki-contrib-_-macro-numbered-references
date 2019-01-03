@@ -37,10 +37,10 @@ parallel(
             xwikiBuild() {
                 // Upgrade parents to build with the latest version of XWiki available to ensure that this extension
                 // works with the latest XWiki.
+                updateParent: true
                 // Note: we use the "verify" goals to be sure we don't install or deploy artifacts to any Maven repo
                 // (which would overwrite proper artifacts!).
                 goals: 'verify'
-                updateParent: true
             }
         }
     }
