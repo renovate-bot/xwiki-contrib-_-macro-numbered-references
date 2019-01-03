@@ -39,6 +39,7 @@ import org.xwiki.rendering.block.FigureCaptionBlock;
 import org.xwiki.rendering.block.FormatBlock;
 import org.xwiki.rendering.block.IdBlock;
 import org.xwiki.rendering.block.MacroMarkerBlock;
+import org.xwiki.rendering.block.MetaDataBlock;
 import org.xwiki.rendering.block.SpaceBlock;
 import org.xwiki.rendering.block.WordBlock;
 import org.xwiki.rendering.block.match.BlockMatcher;
@@ -187,12 +188,24 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
         FigureCaptionBlock result = null;
         if (block instanceof MacroMarkerBlock) {
             MacroMarkerBlock macroMarkerBlock = (MacroMarkerBlock) block;
-            if (macroMarkerBlock.getChildren().size() > 0
-                && macroMarkerBlock.getChildren().get(0) instanceof FigureCaptionBlock)
-            {
-                result = (FigureCaptionBlock) macroMarkerBlock.getChildren().get(0);
+            // If there's a MetaDataBlock, check inside it!
+            List<Block> children = macroMarkerBlock.getChildren();
+            if (children.size() > 0) {
+                Block firstChild = children.get(0);
+                if (isFigureCaptionBlock(firstChild)) {
+                    result = (FigureCaptionBlock) firstChild;
+                } else if (firstChild instanceof MetaDataBlock
+                    && firstChild.getChildren().size() > 0 && isFigureCaptionBlock(firstChild.getChildren().get(0)))
+                {
+                    result = (FigureCaptionBlock) firstChild.getChildren().get(0);
+                }
             }
         }
         return result;
+    }
+
+    private boolean isFigureCaptionBlock(Block block)
+    {
+        return block instanceof FigureCaptionBlock;
     }
 }
