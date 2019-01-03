@@ -27,14 +27,14 @@
 parallel(
     'current': {
         node() {
-            xwikiBuild() {
+            xwikiBuild('current') {
                 // Default configuration
             }
         }
     },
     'latest': {
         node() {
-            xwikiBuild() {
+            xwikiBuild('latest') {
                 // Upgrade parents to build with the latest version of XWiki available to ensure that this extension
                 // works with the latest XWiki.
                 updateParent: true
