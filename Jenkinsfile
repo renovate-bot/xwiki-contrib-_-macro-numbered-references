@@ -24,25 +24,5 @@
 // @Library("XWiki@<branch, tag, sha1>") _
 // See https://github.com/jenkinsci/workflow-cps-global-lib-plugin for details.
 
-parallel(
-    'current': {
-        node() {
-            xwikiBuild('current') {
-                // Default configuration
-            }
-        }
-    },
-    'latest': {
-        node() {
-            xwikiBuild('latest') {
-                // Upgrade parents to build with the latest version of XWiki available to ensure that this extension
-                // works with the latest XWiki.
-                updateParent = true
-                // Note: we use the "verify" goals to be sure we don't install or deploy artifacts to any Maven repo
-                // (which would overwrite proper artifacts!).
-                goals = 'verify'
-            }
-        }
-    }
-)
-
+xwikiModule {
+}
