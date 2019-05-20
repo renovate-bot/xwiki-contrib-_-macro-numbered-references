@@ -460,6 +460,72 @@ public class NumberedFiguresTransformationTest
         assertEquals(expectedContent, printer.toString());
     }
 
+    @Test
+    public void transformWithLeadingItalicsInFigureCaption() throws Exception
+    {
+        String content = "{{figure}}\n"
+            + "{{figureCaption}}\n"
+            + "//p//-Values\n"
+            + "{{/figureCaption}}\n"
+            + "\n"
+            + "Figure content\n"
+            + "{{/figure}}";
+
+        Parser parser = this.mocker.getInstance(Parser.class, "xwiki/2.1");
+        XDOM xdom = parser.parse(new StringReader(content));
+        // Execute the Macro transformation
+        MacroTransformation macroTransformation = this.mocker.getInstance(Transformation.class, "macro");
+        macroTransformation.transform(xdom, new TransformationContext());
+
+        this.mocker.getComponentUnderTest().transform(xdom, new TransformationContext());
+
+        WikiPrinter printer = new DefaultWikiPrinter();
+        BlockRenderer renderer = this.mocker.getInstance(BlockRenderer.class, Syntax.EVENT_1_0.toIdString());
+        renderer.render(xdom, printer);
+
+        String expectedContent = "beginDocument [[syntax]=[XWiki 2.1]]\n"
+            + "beginMacroMarkerStandalone [figure] [] [{{figureCaption}}\n"
+            + "//p//-Values\n"
+            + "{{/figureCaption}}\n"
+            + "\n"
+            + "Figure content]\n"
+            + "beginMetaData [[non-generated-content]=[java.util.List< org.xwiki.rendering.block.Block >]]\n"
+            + "beginFigure\n"
+            + "beginMacroMarkerStandalone [figureCaption] [] [//p//-Values]\n"
+            + "beginMetaData [[non-generated-content]=[java.util.List< org.xwiki.rendering.block.Block >]]\n"
+            + "beginFigureCaption\n"
+            + "beginFormat [NONE] [[class]=[wikigeneratedfigurenumber]]\n"
+            + "onWord [Figure]\n"
+            + "onSpace\n"
+            + "onWord [1]\n"
+            + "onSpecialSymbol [:]\n"
+            + "onSpace\n"
+            + "endFormat [NONE] [[class]=[wikigeneratedfigurenumber]]\n"
+            + "beginFormat [ITALIC]\n"
+            + "onWord [p]\n"
+            + "endFormat [ITALIC]\n"
+            + "onSpecialSymbol [-]\n"
+            + "onWord [Values]\n"
+            + "endFigureCaption\n"
+            + "endMetaData [[non-generated-content]=[java.util.List< org.xwiki.rendering.block.Block >]]\n"
+            + "endMacroMarkerStandalone [figureCaption] [] [//p//-Values]\n"
+            + "beginParagraph\n"
+            + "onWord [Figure]\n"
+            + "onSpace\n"
+            + "onWord [content]\n"
+            + "endParagraph\n"
+            + "endFigure\n"
+            + "endMetaData [[non-generated-content]=[java.util.List< org.xwiki.rendering.block.Block >]]\n"
+            + "endMacroMarkerStandalone [figure] [] [{{figureCaption}}\n"
+            + "//p//-Values\n"
+            + "{{/figureCaption}}\n"
+            + "\n"
+            + "Figure content]\n"
+            + "endDocument [[syntax]=[XWiki 2.1]]";
+
+        assertEquals(expectedContent, printer.toString());
+    }
+
     private List<Block> blocks(Block... blocks)
     {
         return Arrays.asList(blocks);

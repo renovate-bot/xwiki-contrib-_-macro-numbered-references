@@ -142,7 +142,7 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
         boolean generated = false;
         if (block instanceof FormatBlock) {
             String classValue = block.getParameter(CLASS);
-            if (classValue.equals(getClassValue(isTable))) {
+            if (getClassValue(isTable).equals(classValue)) {
                 generated = true;
             }
         }
