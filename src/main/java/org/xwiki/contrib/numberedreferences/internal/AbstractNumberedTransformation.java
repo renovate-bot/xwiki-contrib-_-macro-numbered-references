@@ -23,15 +23,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.xwiki.rendering.block.Block;
 import org.xwiki.rendering.block.LinkBlock;
 import org.xwiki.rendering.block.MacroMarkerBlock;
 import org.xwiki.rendering.block.match.ClassBlockMatcher;
 import org.xwiki.rendering.listener.reference.DocumentResourceReference;
 import org.xwiki.rendering.transformation.AbstractTransformation;
-import org.xwiki.rendering.util.ErrorBlockGenerator;
 
 /**
  * Common code for all numbered transformations.
@@ -41,9 +38,6 @@ import org.xwiki.rendering.util.ErrorBlockGenerator;
  */
 public abstract class AbstractNumberedTransformation extends AbstractTransformation
 {
-    @Inject
-    private ErrorBlockGenerator errorBlockGenerator;
-
     @Override
     public int getPriority()
     {
@@ -52,7 +46,7 @@ public abstract class AbstractNumberedTransformation extends AbstractTransformat
         return 2000;
     }
 
-    protected void replaceReferenceBlocks(Block block, Map<String, List<Block>> numbers, String typeName)
+    protected void replaceReferenceBlocks(Block block, Map<String, List<Block>> numbers)
     {
         List<Block> referenceBlocks =
             block.getBlocks(new ClassBlockMatcher(ReferenceBlock.class), Block.Axes.DESCENDANT);
@@ -62,7 +56,7 @@ public abstract class AbstractNumberedTransformation extends AbstractTransformat
             ReferenceBlock referenceBlock = (ReferenceBlock) untypedReferenceBlock;
             String id = referenceBlock.getId();
             List<Block> numberBlocks = numbers.get(id);
-            MacroMarkerBlock referenceParentBlock = (MacroMarkerBlock) referenceBlock.getParent();
+            Block referenceParentBlock = referenceBlock.getParent();
             if (numberBlocks != null) {
                 // Add the LinkBlock
                 DocumentResourceReference resourceReference = new DocumentResourceReference("");

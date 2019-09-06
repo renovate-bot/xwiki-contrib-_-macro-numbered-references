@@ -120,7 +120,7 @@ public class NumberedHeadingsTransformation extends AbstractNumberedTransformati
         }
 
         // Step 4: Replace the ReferenceBlock with links
-        replaceReferenceBlocks(block, headingNumbers, "section");
+        replaceReferenceBlocks(block, headingNumbers);
     }
 
     private void insertHeaderNumber(HeaderBlock headerBlock, Stack<Integer> number)

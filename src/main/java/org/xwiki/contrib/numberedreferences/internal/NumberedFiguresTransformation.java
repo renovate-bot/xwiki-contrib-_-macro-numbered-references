@@ -121,7 +121,7 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
         }
 
         // Replace the ReferenceBlock with links
-        replaceReferenceBlocks(block, figureNumbers, "figure");
+        replaceReferenceBlocks(block, figureNumbers);
     }
 
     private void insertFigureCaptionNumber(FigureCaptionBlock figureCaptionBlock, int number, boolean isTable)
