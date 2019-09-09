@@ -185,22 +185,26 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
 
     private FigureCaptionBlock extractFigureCaptionBlock(Block block)
     {
+        // Check if the passed block is a FigureCaptionBlock, allowing FigureCaptionBlock nested inside MacroMarkerBlock
+        // and MetaDataBlock.
         FigureCaptionBlock result = null;
-        if (block instanceof MacroMarkerBlock) {
-            MacroMarkerBlock macroMarkerBlock = (MacroMarkerBlock) block;
-            // If there's a MetaDataBlock, check inside it!
-            List<Block> children = macroMarkerBlock.getChildren();
-            if (children.size() > 0) {
-                Block firstChild = children.get(0);
-                if (isFigureCaptionBlock(firstChild)) {
-                    result = (FigureCaptionBlock) firstChild;
-                } else if (firstChild instanceof MetaDataBlock
-                    && firstChild.getChildren().size() > 0 && isFigureCaptionBlock(firstChild.getChildren().get(0)))
-                {
-                    result = (FigureCaptionBlock) firstChild.getChildren().get(0);
+        Block currentBlock = block;
+        while (true) {
+            if (isFigureCaptionBlock(currentBlock)) {
+                result = (FigureCaptionBlock) currentBlock;
+                break;
+            } else if (currentBlock instanceof MacroMarkerBlock || currentBlock instanceof MetaDataBlock) {
+                List<Block> children = currentBlock.getChildren();
+                if (children.size() > 0) {
+                    currentBlock = children.get(0);
+                } else {
+                    break;
                 }
+            } else {
+                break;
             }
         }
+
         return result;
     }
 
