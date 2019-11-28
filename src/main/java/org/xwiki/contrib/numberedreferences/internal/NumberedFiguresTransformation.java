@@ -173,7 +173,7 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
     {
         FigureCaptionBlock result = null;
         List<Block> children = block.getChildren();
-        if (children.size() > 0) {
+        if (!children.isEmpty()) {
             // The FigureCaptionBlock is either the first child block or the last one
             result = extractFigureCaptionBlock(children.get(0));
             if (result == null) {
@@ -195,7 +195,7 @@ public class NumberedFiguresTransformation extends AbstractNumberedTransformatio
                 break;
             } else if (currentBlock instanceof MacroMarkerBlock || currentBlock instanceof MetaDataBlock) {
                 List<Block> children = currentBlock.getChildren();
-                if (children.size() > 0) {
+                if (!children.isEmpty()) {
                     currentBlock = children.get(0);
                 } else {
                     break;
