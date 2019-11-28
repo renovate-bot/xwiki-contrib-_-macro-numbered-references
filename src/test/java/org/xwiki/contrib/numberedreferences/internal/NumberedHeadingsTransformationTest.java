@@ -163,10 +163,4 @@ public class NumberedHeadingsTransformationTest
 
         assertEquals(expectedContent, printer.toString());
     }
-
-    @Test
-    public void transformWhenRefereneInsideTableInsideMacro()
-    {
-    }
-
 }

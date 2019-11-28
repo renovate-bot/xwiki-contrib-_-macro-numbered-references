@@ -34,6 +34,7 @@
   <url>http://extensions.xwiki.org/xwiki/bin/view/Extension/Numbered%20Reference%20Macro/</url>
   <properties>
     <xwiki.jacoco.instructionRatio>0.91</xwiki.jacoco.instructionRatio>
+    <xwiki.pitest.mutationThreshold>93</xwiki.pitest.mutationThreshold>
     <!-- Extension Manager category -->
     <xwiki.extension.category>macro</xwiki.extension.category>
     <xwiki.issueManagement.system>jira</xwiki.issueManagement.system>
