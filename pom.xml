@@ -42,6 +42,10 @@
     <!-- TODO: Remove the following line when upgrading the parent version -->
     <!-- Right now XWiki/Spoon fails with a NPE on this module -->
     <xwiki.spoon.skip>true</xwiki.spoon.skip>
+    <!-- TODO: Remove the sonar properties when upgraing the parent version -->
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    <sonar.organization>xwiki</sonar.organization>
+    <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
   </properties>
   <scm>
     <connection>scm:git:git://github.com/xwiki-contrib/macro-numbered-references.git</connection>

@@ -24,5 +24,11 @@
 // @Library("XWiki@<branch, tag, sha1>") _
 // See https://github.com/jenkinsci/workflow-cps-global-lib-plugin for details.
 
-xwikiModule {
+node() {
+    xwikiBuild {
+        goals = 'clean deploy jacoco:report sonar:sonar'
+        profiles = 'quality'
+        properties = '-Dxwiki.pitest.skip=false'
+        sonar = true
+    }
 }
