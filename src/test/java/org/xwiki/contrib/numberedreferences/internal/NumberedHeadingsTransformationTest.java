@@ -154,12 +154,34 @@ public class NumberedHeadingsTransformationTest
 
         this.mocker.getComponentUnderTest().transform(xdom, new TransformationContext());
 
-        // First, verify that the headings have had numbers added to them.
         WikiPrinter printer = new DefaultWikiPrinter();
         BlockRenderer renderer = this.mocker.getInstance(BlockRenderer.class, Syntax.XWIKI_2_1.toIdString());
         renderer.render(xdom, printer);
 
         String expectedContent = "= (% class=\"wikigeneratedheadingnumber\" %)1 (%%)heading A =";
+
+        assertEquals(expectedContent, printer.toString());
+    }
+
+    @Test
+    public void transformWhenStyleInHeading() throws Exception
+    {
+        String content = "= (% style=\"font-variant-caps:small-caps\" %)Bla(%%) Blubs =\n";
+
+        Parser parser = this.mocker.getInstance(Parser.class, "xwiki/2.1");
+        XDOM xdom = parser.parse(new StringReader(content));
+        // Execute the Macro transformation
+        MacroTransformation macroTransformation = this.mocker.getInstance(Transformation.class, "macro");
+        macroTransformation.transform(xdom, new TransformationContext());
+
+        this.mocker.getComponentUnderTest().transform(xdom, new TransformationContext());
+
+        WikiPrinter printer = new DefaultWikiPrinter();
+        BlockRenderer renderer = this.mocker.getInstance(BlockRenderer.class, Syntax.XWIKI_2_1.toIdString());
+        renderer.render(xdom, printer);
+
+        String expectedContent =
+            "= (% class=\"wikigeneratedheadingnumber\" %)1 (% style=\"font-variant-caps:small-caps\" %)Bla(%%) Blubs =";
 
         assertEquals(expectedContent, printer.toString());
     }

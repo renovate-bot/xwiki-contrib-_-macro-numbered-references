@@ -141,7 +141,7 @@ public class NumberedHeadingsTransformation extends AbstractNumberedTransformati
         boolean generated = false;
         if (block instanceof FormatBlock) {
             String classValue = block.getParameter(CLASS);
-            if (classValue.equals(CLASS_VALUE)) {
+            if (classValue != null && classValue.equals(CLASS_VALUE)) {
                 generated = true;
             }
         }
