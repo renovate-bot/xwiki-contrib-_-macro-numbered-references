@@ -116,7 +116,7 @@ public class NumberedHeadingsTransformationTest
     }
 
     @Test
-    public void transformIgnoresProtectedContent() throws Exception
+    public void transformIgnoresProtectedContentWithCodeMacro() throws Exception
     {
         String expected = "beginDocument\n"
             + "beginMacroMarkerStandalone [code] []\n"
@@ -136,6 +136,38 @@ public class NumberedHeadingsTransformationTest
 
         WikiPrinter printer = new DefaultWikiPrinter();
         BlockRenderer renderer = this.mocker.getInstance(BlockRenderer.class, Syntax.EVENT_1_0.toIdString());
+        renderer.render(xdom, printer);
+
+        assertEquals(expected, printer.toString());
+    }
+
+    @Test
+    public void transformIgnoresProtectedContentWithProtectedParameter() throws Exception
+    {
+        String expected = "= (% class=\"wikigeneratedheadingnumber\" %)1 (%%)heading A =\n\n"
+            + "(% data-xwiki-rendering-protected=\"true\" %)\n"
+            + "== heading B ==\n\n"
+            + "(% data-xwiki-rendering-protected=\"true\" %)\n"
+            + "(((\n"
+            + "== heading C ==\n"
+            + ")))\n\n"
+            + "= (% class=\"wikigeneratedheadingnumber\" %)2 (%%)heading E =";
+
+        String content = "= heading A =\n\n"
+            + "(% data-xwiki-rendering-protected = 'true' %)\n"
+            + "== heading B ==\n\n"
+            + "(% data-xwiki-rendering-protected = 'true' %)(((\n"
+            + "== heading C ==\n\n"
+            + ")))\n\n"
+            + "= heading E =\n";
+
+        Parser parser = this.mocker.getInstance(Parser.class, "xwiki/2.1");
+        XDOM xdom = parser.parse(new StringReader(content));
+
+        this.mocker.getComponentUnderTest().transform(xdom, new TransformationContext());
+
+        WikiPrinter printer = new DefaultWikiPrinter();
+        BlockRenderer renderer = this.mocker.getInstance(BlockRenderer.class, Syntax.XWIKI_2_1.toIdString());
         renderer.render(xdom, printer);
 
         assertEquals(expected, printer.toString());

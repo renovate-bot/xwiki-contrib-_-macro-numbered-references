@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.xwiki.rendering.block.Block;
 import org.xwiki.rendering.block.LinkBlock;
 import org.xwiki.rendering.block.MacroMarkerBlock;
@@ -82,6 +83,18 @@ public abstract class AbstractNumberedTransformation extends AbstractTransformat
 
     private boolean isProtectedBlock(Block block)
     {
-        return (block instanceof MacroMarkerBlock) && "code".equals(((MacroMarkerBlock) block).getId());
+        // A protected block is either:
+        // - a code macro block
+        // - a block having a "data-xwiki-rendering-protected" parameter with value "true"
+        boolean isProtected = false;
+        if ((block instanceof MacroMarkerBlock) && "code".equals(((MacroMarkerBlock) block).getId())) {
+            isProtected = true;
+        } else {
+            String parameterValue = block.getParameter("data-xwiki-rendering-protected");
+            if (!StringUtils.isEmpty(parameterValue) && Boolean.valueOf(parameterValue)) {
+                isProtected = true;
+            }
+        }
+        return isProtected;
     }
 }
