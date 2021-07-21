@@ -28,7 +28,7 @@
     <version>10.11</version>
   </parent>
   <artifactId>macro-numbered-references</artifactId>
-  <version>1.4</version>
+  <version>1.5-SNAPSHOT</version>
   <name>Numbered Reference Macro</name>
   <description>Provides numbered headings, figures and tables and references to them</description>
   <url>http://extensions.xwiki.org/xwiki/bin/view/Extension/Numbered%20Reference%20Macro/</url>
@@ -51,7 +51,7 @@
     <connection>scm:git:git://github.com/xwiki-contrib/macro-numbered-references.git</connection>
     <developerConnection>scm:git:git@github.com:xwiki-contrib/macro-numbered-references.git</developerConnection>
     <url>https://github.com/xwiki-contrib/macro-numbered-references</url>
-    <tag>macro-numbered-references-1.4</tag>
+    <tag>HEAD</tag>
   </scm>
   <developers>
     <developer>
