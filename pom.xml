@@ -46,6 +46,7 @@
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.organization>xwiki</sonar.organization>
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+    <xwiki.release.jira.skip>false</xwiki.release.jira.skip>
   </properties>
   <scm>
     <connection>scm:git:git://github.com/xwiki-contrib/macro-numbered-references.git</connection>
