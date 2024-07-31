@@ -26,9 +26,5 @@
 
 node() {
     xwikiBuild {
-        goals = 'clean deploy jacoco:report sonar:sonar'
-        profiles = 'quality'
-        properties = '-Dxwiki.pitest.skip=false'
-        sonar = true
     }
 }
